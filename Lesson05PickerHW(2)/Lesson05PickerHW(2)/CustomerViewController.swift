@@ -86,6 +86,6 @@ class CustomerViewController: UIViewController, UITextFieldDelegate {
     //to hide keyboard
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        return (true)
+        return true
     }
 }

@@ -36,6 +36,8 @@ class ViewController: UIViewController {
             print("error")
         }
         
+        //timeSlider.isContinuous = false
+        
         timeSlider.setThumbImage(UIImage(imageLiteralResourceName: "thumb"), for: .normal)
         
         timerForSlider = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimeSlider), userInfo: nil, repeats: true)
