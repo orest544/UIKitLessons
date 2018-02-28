@@ -16,16 +16,19 @@ extension Double {
     }
 }
 
-class TableViewController: UITableViewController, UITextFieldDelegate {
+class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardCurrencyConverterDelegate {
+    let keyboardView = KeyboardCurrencyConverter(frame: CGRect(x: 0, y: 0, width: 0, height: 230))
     
     var currencyNamesArray = [String]()
     var allActiveTextFieldsArray = [UITextField]()
     var textFieldsDict = [UITextField: String]()
     
     var currentCurrencyCC = "UAH"
-
-    var firstTimeChangeTrigger = true
+    var currentTextField = UITextField()
     
+    var firstTimeChangedTrigger = true
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,31 +38,20 @@ class TableViewController: UITableViewController, UITextFieldDelegate {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         //self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-        self.title = "Currency exchange"
         CurrencyData.loadCurrencyData()
+        //self.title = "Currency exchange"
+        self.keyboardView.delegate = self
         
-        let array = UserDefaults.standard.object(forKey: "array") as! [String]
-        currencyNamesArray = array
+        let array = UserDefaults.standard.object(forKey: "currencyNamesArray") as! [String]
+        self.currencyNamesArray = array
         tableView.reloadData()
        
         // options for animation
         //self.view.frame.origin.y = -250
     }
-
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(true)
-//
-//        self.view.frame.origin.y = -250
-//    }
     
-    //Animation
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-//
-//
-//        allActiveTextFieldsArray[0].isEnabled = true
-//        allActiveTextFieldsArray[0].becomeFirstResponder()
-
 
 //        UIView.animate(withDuration: 0.5) {
 //            self.allActiveTextFieldsArray[0].becomeFirstResponder()
@@ -73,9 +65,11 @@ class TableViewController: UITableViewController, UITextFieldDelegate {
         tableView.selectRow(at: index, animated: true, scrollPosition: .top)
         cell.textField.isEnabled = true
         cell.textField.becomeFirstResponder()
+        self.currentTextField = cell.textField
     }
 
     // MARK: - Table view creation
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
@@ -95,28 +89,15 @@ class TableViewController: UITableViewController, UITextFieldDelegate {
         cell.imageViewFlag?.image = UIImage(named: currencyNamesArray[0 /*indexPath.row*/]) //CHANGES FOR DEV
         cell.textField.tintColor = .clear
         
+        // replace system keyboard with custom keyboard
+        cell.textField.inputView = keyboardView
+        
         allActiveTextFieldsArray.append(cell.textField) //all textfield has unique code
         textFieldsDict[cell.textField] = currencyNamesArray[indexPath.row]
 
         return cell
     }
     
-    // Select a row
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        print("cell selected")
-        
-        let cell = tableView.cellForRow(at: indexPath) as! CustomTableViewCell
-        cell.textField.isEnabled = true
-        cell.textField.becomeFirstResponder()
-        
-        //print("cell selected") //, cell.textField)
-        
-//        allActiveTextFieldsArray[0].text = "UAH"
-//        allActiveTextFieldsArray[1].text = "USD"
-//        allActiveTextFieldsArray[2].text = "EUR"
-//        allActiveTextFieldsArray[3].text = "RUB"
-    }
     
     /*
     // Override to support conditional editing of the table view.
@@ -134,7 +115,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate {
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
     */
 
@@ -155,7 +136,26 @@ class TableViewController: UITableViewController, UITextFieldDelegate {
 
     // MARK: - Methods
     
+    override public func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        return false
+    }
     
+    // Entering point from editing tableView
+    @IBAction func unwindSegue(_ sender: UIStoryboardSegue) {
+        currencyNamesArray = ["UAH", "RUB"]
+        tableView.reloadData()
+    }
+    
+    // Select a row
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("cell selected")
+        
+        let cell = tableView.cellForRow(at: indexPath) as! CustomTableViewCell
+        cell.textField.isEnabled = true
+        cell.textField.becomeFirstResponder()
+        currentTextField = cell.textField
+        //print("cell selected") //, cell.textField)
+    }
     
     // MARK: - TextFieldDelegate
     
@@ -178,39 +178,15 @@ class TableViewController: UITableViewController, UITextFieldDelegate {
         self.allActiveTextFieldsArray = self.allActiveTextFieldsArray.filter {
             return $0 == textField ? false : true
         }
-        //        print("Current: \(self.currentCurrencyCC)")
-        //
-        //        for key in self.allActiveTextFieldsArray {
-        //            print(self.textFieldsDict[key]!)
-        //        }
-        
-    }
-    
-    
-    @IBAction func valueChanged(_ sender: UITextField) {
-        print("valueChanged")
-    }
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        print(string)
-        
-        if self.firstTimeChangeTrigger && string != "" {
-            //if let lastChar = textField.text?.last {
-                textField.text = ""
-            self.firstTimeChangeTrigger = false
-
-            //}
-//        } else if string != "" {
-//            self.firstTimeChangeTrigger = false
-        }
-
-        return true
     }
     
     @IBAction func editingChange(_ sender: UITextField) {
-        
         print("editing changed")
-       
+        
+        if sender.text == "0" {
+            sender.text = ""
+        }
+        
         var value: Double = 0.0
         if let text = sender.text {
             if let _value = Double(text) {
@@ -226,35 +202,78 @@ class TableViewController: UITableViewController, UITextFieldDelegate {
             
             //all transformations via UAH [Chosen currency -> UAH -> direct currency]
             let result = (value * exchangeValueOfCurrencyChoosenTextField / valueForCCKey).rounded(toPlaces: 3)
-            if /*sender.text?.first == "0" ||*/ result == 0.0 {
-                sender.text = ""
-                someCurrencyTextField.text = ""//"0"
+            print("result = \(result)")
+            
+            if result == 0.0 {
+                someCurrencyTextField.text = "0"
             } else {
                 someCurrencyTextField.text = String(result)
             }
         }
-         //print(sender.text! ,value)
+         print(sender.text! ,value)
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        
         print("end editing")
         
         textField.isEnabled = false
-        //textField.endFloatingCursor()
+        self.firstTimeChangedTrigger = true
+    }
+    
+    
+    // MARK - Methods of custom keyboard delegate
+    
+    func keyWasTapped(character: String) {
+        if self.firstTimeChangedTrigger && character != "" {
+            self.currentTextField.text = ""
+            self.currentTextField.insertText("0")
+            self.firstTimeChangedTrigger = false
+        }
         
-        self.firstTimeChangeTrigger = true
+        if character == "0" && currentTextField.text != "" {
+            currentTextField.insertText(character)
+            print("inserting 0")
+        } else {
+            self.currentTextField.insertText(character)
+            print("Inserting = \(character)")
+        }
+    }
+   
+    func hideKeyWasTapped() {
+        self.view.endEditing(true)
     }
     
-    override public func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return false
+    func dotKeyWasTapped() {
+        if self.firstTimeChangedTrigger {
+            self.currentTextField.text = ""
+            self.firstTimeChangedTrigger = false
+        }
+        
+        if currentTextField.text == "" {
+            currentTextField.insertText("0.")
+        }
+        
+        if currentTextField.text?.range(of: ".") == nil {
+            self.currentTextField.insertText(".")
+        }
     }
     
-    @IBAction func unwindSegue(_ sender: UIStoryboardSegue) {
-        currencyNamesArray = ["UAH", "RUB"]
-        tableView.reloadData()
+    func backspaceKeyWasTapped() {
+        self.currentTextField.deleteBackward()
     }
     
+    func clearKeyWasTapped() {
+        currentTextField.text = ""
+        currentTextField.insertText("0")
+        
+        firstTimeChangedTrigger = false
+    }
+    
+    func editKeyWasTapped() {
+        let editVC = self.storyboard?.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
+        
+        self.present(editVC, animated: true, completion: nil)
+    }
     /*
     // MARK: - Navigation
 

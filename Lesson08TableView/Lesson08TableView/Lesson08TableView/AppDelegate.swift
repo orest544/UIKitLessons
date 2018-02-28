@@ -17,10 +17,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // Disable shake to edit
+        UIApplication.shared.applicationSupportsShakeToEdit = false
+        
+        // Make status bar not transparent
+        let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView
+        statusBar?.backgroundColor = UIColor.white
+        
+        //
         let defaults = UserDefaults.standard
         
         if defaults.object(forKey: "firstTimeLaunch") == nil {
-            let currencyNamesArray = ["UAH", "USD", "EUR"]
+            let currencyNamesArray = ["UAH", "USD", "EUR", "RUB", "PLN", "GBP", "CZK"]
             defaults.set(currencyNamesArray, forKey: "currencyNamesArray")
         } else {
             return true

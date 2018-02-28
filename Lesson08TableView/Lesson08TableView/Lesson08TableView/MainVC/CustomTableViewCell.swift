@@ -9,6 +9,7 @@
 import UIKit
 
 class CustomTableViewCell: UITableViewCell {
+    
     @IBOutlet weak var imageViewFlag: UIImageView!
     @IBOutlet weak var ccLabel: UILabel!
     @IBOutlet weak var textField: UITextField!
@@ -22,5 +23,4 @@ class CustomTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
     }
-
 }
