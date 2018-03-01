@@ -17,8 +17,8 @@ protocol KeyboardCurrencyConverterDelegate: class {
     func editKeyWasTapped()
 }
 
-class KeyboardCurrencyConverter: UIView {
-   
+class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
+
     @IBOutlet weak var button_1: UIButton!
     @IBOutlet weak var button_2: UIButton!
     @IBOutlet weak var button_3: UIButton!
@@ -36,7 +36,8 @@ class KeyboardCurrencyConverter: UIView {
     @IBOutlet weak var button_edit: UIButton!
     
     weak var delegate: KeyboardCurrencyConverterDelegate?
-
+    var enableInputClicksWhenVisible = true
+    
     // MARK: - Keyboard initialization
     
     required init?(coder aDecoder: NSCoder) {
@@ -56,7 +57,7 @@ class KeyboardCurrencyConverter: UIView {
         let view = Bundle.main.loadNibNamed(xibFileName, owner: self, options: nil)![0] as! UIView
         self.addSubview(view)
         view.frame = self.bounds
-        
+    
         buttonConfigurating(button_1)
         buttonConfigurating(button_2)
         buttonConfigurating(button_3)
@@ -83,40 +84,31 @@ class KeyboardCurrencyConverter: UIView {
         sender.layer.masksToBounds = false
     }
     
+    
     // MARK: - Button actions from .xib file
     
     @IBAction func keyTapped(_ sender: UIButton) {
+        UIDevice.current.playInputClick()
+        
         // When a button is tapped, send that information to the
         // delegate (ie, the view controller)
-        self.delegate?.keyWasTapped(character: sender.titleLabel!.text!) // could alternatively send a tag value
+        switch sender.tag {
+        case 0: // Numbers 0 - 9
+            self.delegate?.keyWasTapped(character: sender.titleLabel!.text!)
+        case 1: // Dot
+            self.delegate?.dotKeyWasTapped()
+        case 2: // Edit
+            self.delegate?.editKeyWasTapped()
+        case 3: // Clear
+            self.delegate?.clearKeyWasTapped()
+        case 4: // Backspace
+            self.delegate?.backspaceKeyWasTapped()
+        case 5: // Hide
+            self.delegate?.hideKeyWasTapped()
+        default:
+            break
+        }
+        
         print("Tapped = \(sender.titleLabel!.text!)")
     }
-    
-    @IBAction func hideKeyTapped(_ sender: UIButton) {
-        self.delegate?.hideKeyWasTapped()
-    }
-    
-    @IBAction func dotKeyTapped(_ sender: UIButton) {
-        self.delegate?.dotKeyWasTapped()
-    }
-    
-    @IBAction func backspaceKeyTapped(_ sender: UIButton) {
-        self.delegate?.backspaceKeyWasTapped()
-    }
-    
-    @IBAction func clearKeyTapped(_ sender: UIButton) {
-        self.delegate?.clearKeyWasTapped()
-    }
-    
-    @IBAction func editKeyTapped(_ sender: UIButton) {
-        self.delegate?.editKeyWasTapped()
-    }
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
-
 }
