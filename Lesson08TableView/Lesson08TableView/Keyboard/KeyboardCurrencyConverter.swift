@@ -9,7 +9,7 @@
 import UIKit
 
 protocol KeyboardCurrencyConverterDelegate: class {
-    func keyWasTapped(character: String)
+    func NumberKeyWasTapped(character: String)
     func hideKeyWasTapped()
     func dotKeyWasTapped()
     func backspaceKeyWasTapped()
@@ -88,20 +88,24 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
     // MARK: - Button actions from .xib file
     
     @IBAction func keyTapped(_ sender: UIButton) {
-        UIDevice.current.playInputClick()
         
+
         // When a button is tapped, send that information to the
         // delegate (ie, the view controller)
         switch sender.tag {
         case 0: // Numbers 0 - 9
-            self.delegate?.keyWasTapped(character: sender.titleLabel!.text!)
+            UIDevice.current.playInputClick()
+            self.delegate?.NumberKeyWasTapped(character: sender.titleLabel!.text!)
         case 1: // Dot
+            UIDevice.current.playInputClick()
             self.delegate?.dotKeyWasTapped()
         case 2: // Edit
             self.delegate?.editKeyWasTapped()
         case 3: // Clear
+            UIDevice.current.playInputClick()
             self.delegate?.clearKeyWasTapped()
         case 4: // Backspace
+            UIDevice.current.playInputClick()
             self.delegate?.backspaceKeyWasTapped()
         case 5: // Hide
             self.delegate?.hideKeyWasTapped()

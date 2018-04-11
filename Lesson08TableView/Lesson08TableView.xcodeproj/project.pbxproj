@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		044224DB1FBB3D5800CB54CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044224DA1FBB3D5800CB54CC /* AppDelegate.swift */; };
 		044224E01FBB3D5800CB54CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 044224DE1FBB3D5800CB54CC /* Main.storyboard */; };
-		044224E31FBB3D5800CB54CC /* Lesson08TableView.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 044224E11FBB3D5800CB54CC /* Lesson08TableView.xcdatamodeld */; };
+		044224E31FBB3D5800CB54CC /* CurrencyDatabase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 044224E11FBB3D5800CB54CC /* CurrencyDatabase.xcdatamodeld */; };
 		044224E51FBB3D5800CB54CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 044224E41FBB3D5800CB54CC /* Assets.xcassets */; };
 		044224E81FBB3D5800CB54CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 044224E61FBB3D5800CB54CC /* LaunchScreen.storyboard */; };
 		044224F01FBB3DBA00CB54CC /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044224EF1FBB3DBA00CB54CC /* TableViewController.swift */; };
@@ -47,6 +47,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		04283B49204C821C0012C45B /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				044224E11FBB3D5800CB54CC /* CurrencyDatabase.xcdatamodeld */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
 		044224CE1FBB3D5800CB54CC = {
 			isa = PBXGroup;
 			children = (
@@ -70,11 +78,10 @@
 				049A8FDF204754C90039C3FF /* MainVC */,
 				049A8FE0204755020039C3FF /* EditVC */,
 				046B81F42040641A000A5939 /* Keyboard */,
-				044224DE1FBB3D5800CB54CC /* Main.storyboard */,
+				04283B49204C821C0012C45B /* CoreData */,
 				044224E41FBB3D5800CB54CC /* Assets.xcassets */,
 				044224E61FBB3D5800CB54CC /* LaunchScreen.storyboard */,
 				044224E91FBB3D5800CB54CC /* Info.plist */,
-				044224E11FBB3D5800CB54CC /* Lesson08TableView.xcdatamodeld */,
 			);
 			path = Lesson08TableView;
 			sourceTree = "<group>";
@@ -94,6 +101,7 @@
 				04C674721FD0A97000A22E3B /* CurrencyData.swift */,
 				044224EF1FBB3DBA00CB54CC /* TableViewController.swift */,
 				044224F91FBB46D900CB54CC /* CustomTableViewCell.swift */,
+				044224DE1FBB3D5800CB54CC /* Main.storyboard */,
 			);
 			path = MainVC;
 			sourceTree = "<group>";
@@ -180,7 +188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				046B81F32040612D000A5939 /* KeyboardCurrencyConverter.swift in Sources */,
-				044224E31FBB3D5800CB54CC /* Lesson08TableView.xcdatamodeld in Sources */,
+				044224E31FBB3D5800CB54CC /* CurrencyDatabase.xcdatamodeld in Sources */,
 				044224F01FBB3DBA00CB54CC /* TableViewController.swift in Sources */,
 				044224FA1FBB46D900CB54CC /* CustomTableViewCell.swift in Sources */,
 				04C674731FD0A97000A22E3B /* CurrencyData.swift in Sources */,
@@ -325,7 +333,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 354DS94RY8;
 				INFOPLIST_FILE = Lesson08TableView/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = OP.Lesson08TableView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -341,7 +349,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 354DS94RY8;
 				INFOPLIST_FILE = Lesson08TableView/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = OP.Lesson08TableView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -374,13 +382,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		044224E11FBB3D5800CB54CC /* Lesson08TableView.xcdatamodeld */ = {
+		044224E11FBB3D5800CB54CC /* CurrencyDatabase.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
 				044224E21FBB3D5800CB54CC /* Lesson08TableView.xcdatamodel */,
 			);
 			currentVersion = 044224E21FBB3D5800CB54CC /* Lesson08TableView.xcdatamodel */;
-			path = Lesson08TableView.xcdatamodeld;
+			path = CurrencyDatabase.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

@@ -28,7 +28,15 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
     
     var firstTimeChangedTrigger = true
 
-
+    var firstCellIndexPath = IndexPath(row: 0, section: 0)
+    
+    
+    override func loadView() {
+        super.loadView()
+        
+        print("I AM LOADVIEW!")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -38,18 +46,34 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         //self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-        CurrencyData.loadCurrencyData()
+        //CurrencyData.loadCurrencyData()
         //self.title = "Currency exchange"
         self.keyboardView.delegate = self
         
         let array = UserDefaults.standard.object(forKey: "currencyNamesArray") as! [String]
         self.currencyNamesArray = array
         tableView.reloadData()
-       
+        
+//        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+//        let context = appDelegate.persistentContainer.viewContext
+//       
+//        //fetch
+//        do {
+//            CurrencyData.currencysDatabase = try context.fetch(CurrencyDatabase.fetchRequest())
+//            for currency in CurrencyData.currencysDatabase {
+//                print(currency.cc, currency.rate)
+//            }
+//        } catch {
+//            print(error.localizedDescription as Any)
+//        }
+        
         // options for animation
         //self.view.frame.origin.y = -250
+        
+        print("I AM VIEW DID LOAD!")
+        
     }
-    
+        
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
 
@@ -59,15 +83,16 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
 //        }
         
         //to choose the 1st row by default and helps the user to get keyboard already
-        let index = IndexPath(row: 0, section: 0)
-        let cell = tableView.cellForRow(at: index) as! CustomTableViewCell
-       
-        tableView.selectRow(at: index, animated: true, scrollPosition: .top)
+        //let index = IndexPath(row: 0, section: 0)
+        print(self.firstCellIndexPath)
+        let cell = tableView.cellForRow(at: self.firstCellIndexPath) as! CustomTableViewCell
+
+        tableView.selectRow(at: self.firstCellIndexPath, animated: true, scrollPosition: .top)
         cell.textField.isEnabled = true
         cell.textField.becomeFirstResponder()
         self.currentTextField = cell.textField
     }
-
+    
     // MARK: - Table view creation
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -82,6 +107,8 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
 
     // Configure the cells
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        self.firstCellIndexPath = indexPath
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
 
         // Configure the cell
@@ -142,7 +169,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
     
     // Entering point from editing tableView
     @IBAction func unwindSegue(_ sender: UIStoryboardSegue) {
-        currencyNamesArray = ["UAH", "RUB"]
+        //currencyNamesArray = ["UAH", "RUB"]
         tableView.reloadData()
     }
     
@@ -223,7 +250,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
     
     // MARK - Methods of custom keyboard delegate
     
-    func keyWasTapped(character: String) {
+    func NumberKeyWasTapped(character: String) {
         if self.firstTimeChangedTrigger && character != "" {
             self.currentTextField.text = ""
             self.currentTextField.insertText("0")
@@ -271,6 +298,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
     
     func editKeyWasTapped() {
         let editVC = self.storyboard?.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
+        editVC.chosenCurrencyNamesArray = self.currencyNamesArray
         
         self.present(editVC, animated: true, completion: nil)
     }

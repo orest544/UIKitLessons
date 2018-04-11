@@ -9,10 +9,10 @@
 import UIKit
 
 struct Currency: Codable {
-    let r030: Int
-    let txt: String
-    let rate: Double
-    let cc: String
+    let r030: Int // Individual number
+    let txt: String // Full name
+    let rate: Double // Exchange rate
+    let cc: String // Abbreviation
     let exchangedate: String
 }
 
@@ -20,6 +20,9 @@ class CurrencyData: NSObject {
     
     static var check = true
     static var currencys: [Currency] = []
+    
+    static var currencysDatabase: [CurrencyDatabase] = []
+    
     //Default values
     static var currencyDict: [String: Double] = ["RON": 1,
                                                  "MYR": 1,
@@ -33,7 +36,7 @@ class CurrencyData: NSObject {
                                                  "XAG": 1,
                                                  "SEK": 1,
                                                  "AMD": 1,
-                                                 "USD": 27.014,
+                                                 "USD": 1,
                                                  "HRK": 1,
                                                  "GEL": 1,
                                                  "NZD": 1,
@@ -55,7 +58,7 @@ class CurrencyData: NSObject {
                                                  "XDR": 1,
                                                  "PKR": 1,
                                                  "LBP": 1,
-                                                 "EUR": 31.949,
+                                                 "EUR": 1,
                                                  "XPT": 1,
                                                  "AED": 1,
                                                  "TJS": 1,
@@ -71,7 +74,7 @@ class CurrencyData: NSObject {
                                                  "PLN": 1,
                                                  "BRL": 1,
                                                  "KZT": 1,
-                                                 "RUB": 0.463,
+                                                 "RUB": 1,
                                                  "TMT": 1,
                                                  "HKD": 1,
                                                  "TRY": 1,
@@ -82,9 +85,9 @@ class CurrencyData: NSObject {
                                                  "ILS": 1,
                                                  "IDR": 1,
                                                  "CHF": 1]
-    
-    
-    static func loadCurrencyData() {
+    static let appDelegate = UIApplication.shared.delegate as! AppDelegate
+
+    static func loadCurrencyData(completionHandler: @escaping () -> () ) {
         let jsonCurrencyUrlString = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
         guard let currencyUrl = URL(string: jsonCurrencyUrlString) else { return }
         
@@ -101,17 +104,63 @@ class CurrencyData: NSObject {
             
             do {
                 CurrencyData.currencys = try JSONDecoder().decode([Currency].self, from: data)
+                let uahCurrencyObj = Currency(r030: 0, txt: "Ukrainian Hryvnia", rate: 1.0, cc: "UAH", exchangedate: "23.06.1997")
+                CurrencyData.currencys.append(uahCurrencyObj)
                 
+                DispatchQueue.main.async {
+                    let context = self.appDelegate.persistentContainer.viewContext
+                
+                    //fetch and clear
+                    do {
+                        CurrencyData.currencysDatabase = try context.fetch(CurrencyDatabase.fetchRequest())
+                        for currency in CurrencyData.currencysDatabase {
+                            context.delete(currency)
+                            //print(currency.cc ,"\n", currency.rate)
+                        }
+                        appDelegate.saveContext()
+                    } catch {
+                        print(err?.localizedDescription as Any)
+                    }
+                    
+                    //inserting
+                    for currency in CurrencyData.currencys {
+                        let curObjForDatabase = CurrencyDatabase(context: context)
+
+                        curObjForDatabase.r030 = Int64(currency.r030)
+                        curObjForDatabase.txt = currency.txt
+                        curObjForDatabase.rate = currency.rate
+                        curObjForDatabase.cc = currency.cc
+                        curObjForDatabase.exchangedate = currency.exchangedate
+
+                        appDelegate.saveContext()
+                    }
+
+                    //fetch
+                    do {
+                        CurrencyData.currencysDatabase = try context.fetch(CurrencyDatabase.fetchRequest())
+                        
+                        for currency in CurrencyData.currencysDatabase {
+                            print(currency.cc ,"\n", currency.rate)
+                        }
+                    } catch {
+                        print(err?.localizedDescription as Any)
+                    }
+                }
+        
                 //fill the dict
                 for i in 0..<CurrencyData.currencys.count {
                     CurrencyData.currencyDict[CurrencyData.currencys[i].cc] = CurrencyData.currencys[i].rate
                 }
                 CurrencyData.currencyDict["UAH"] = 1.0
+                print("LOADING ENDED")
                 //print(CurrencyData.currencyDict)
             } catch let jsonErr {
                 CurrencyData.check = false
                 print("Error from do catch", jsonErr)
             }
+
+            print("LOAD FUNC ENDED")
+            completionHandler()
         }.resume()
     }
 }
