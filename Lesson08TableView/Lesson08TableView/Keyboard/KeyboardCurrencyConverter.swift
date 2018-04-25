@@ -9,7 +9,7 @@
 import UIKit
 
 protocol KeyboardCurrencyConverterDelegate: class {
-    func NumberKeyWasTapped(character: String)
+    func numberKeyWasTapped(character: String)
     func hideKeyWasTapped()
     func dotKeyWasTapped()
     func backspaceKeyWasTapped()
@@ -84,6 +84,33 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
         sender.layer.masksToBounds = false
     }
     
+    func disableAllNumberKeys () {
+        button_1.isEnabled = false
+        button_2.isEnabled = false
+        button_3.isEnabled = false
+        button_4.isEnabled = false
+        button_5.isEnabled = false
+        button_6.isEnabled = false
+        button_7.isEnabled = false
+        button_8.isEnabled = false
+        button_9.isEnabled = false
+        button_0.isEnabled = false
+        button_dot.isEnabled = false
+    }
+    
+    func enableAllNumberKeys () {
+        button_1.isEnabled = true
+        button_2.isEnabled = true
+        button_3.isEnabled = true
+        button_4.isEnabled = true
+        button_5.isEnabled = true
+        button_6.isEnabled = true
+        button_7.isEnabled = true
+        button_8.isEnabled = true
+        button_9.isEnabled = true
+        button_0.isEnabled = true
+        button_dot.isEnabled = true
+    }
     
     // MARK: - Button actions from .xib file
     
@@ -95,7 +122,7 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
         switch sender.tag {
         case 0: // Numbers 0 - 9
             UIDevice.current.playInputClick()
-            self.delegate?.NumberKeyWasTapped(character: sender.titleLabel!.text!)
+            self.delegate?.numberKeyWasTapped(character: sender.titleLabel!.text!)
         case 1: // Dot
             UIDevice.current.playInputClick()
             self.delegate?.dotKeyWasTapped()
