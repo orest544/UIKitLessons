@@ -67,21 +67,32 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
         buttonConfigurating(button_7)
         buttonConfigurating(button_8)
         buttonConfigurating(button_9)
-        buttonConfigurating(button_0)
-        buttonConfigurating(button_dot)
-        buttonConfigurating(button_C)
-        buttonConfigurating(button_backspace)
-        buttonConfigurating(button_hide)
-        buttonConfigurating(button_edit)
+        
+        button_0.setBackgroundImage(UIImage(named: "buttonZero"), for: .normal)
+        button_dot.setBackgroundImage(UIImage(named: "buttonDot"), for: .normal)
+        
+        button_C.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
+        button_backspace.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
+        button_edit.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
+        button_hide.setBackgroundImage(UIImage(named: "buttonHideGray"), for: .normal)
+
+        button_C.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
+        button_backspace.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
+        button_hide.setBackgroundImage(UIImage(named: "buttonHideGray"), for: .highlighted)
+        button_edit.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
     }
     
     func buttonConfigurating(_ sender: UIButton) {
         // Shadows
-        sender.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
-        sender.layer.shadowOffset = CGSize(width: 0, height: 1.5)
-        sender.layer.shadowOpacity = 1.0
-        sender.layer.shadowRadius = 0.0
-        sender.layer.masksToBounds = false
+//        sender.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+//        sender.layer.shadowOffset = CGSize(width: 0, height: 1.5)
+//        sender.layer.shadowOpacity = 1.0
+//        sender.layer.shadowRadius = 0.0
+//        sender.layer.masksToBounds = false
+        //let image = UIImage(named: "shadow")
+        //sender.imageView?.contentMode = .scaleToFill
+        
+        sender.setBackgroundImage(UIImage(named: "button"), for: .normal)
     }
     
     func disableAllNumberKeys () {
@@ -116,7 +127,7 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
     
     @IBAction func keyTapped(_ sender: UIButton) {
         
-
+        
         // When a button is tapped, send that information to the
         // delegate (ie, the view controller)
         switch sender.tag {

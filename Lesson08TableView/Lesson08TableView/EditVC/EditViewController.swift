@@ -10,6 +10,8 @@ import UIKit
 
 class EditViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
+    @IBOutlet weak var editTableView: UITableView!
+    
     var chosenCurrencyNamesArray = [String]()
     var allCurrencyNamesArray = [String]()
     var sortedCurrencyNamesArray = [String]()
@@ -32,6 +34,10 @@ class EditViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
 
+    @IBAction func editButton(_ sender: UIButton) {
+       // editTableView.isEditing = !editTableView.isEditing
+        editTableView.setEditing(true, animated: true)
+    }
     
     // MARK: - TableViewDataSource
     
@@ -65,6 +71,15 @@ class EditViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 chosenCell?.accessoryType = .checkmark
                 chosenCurrencyNamesArray.append((chosenCell?.textLabel?.text)!)
             }
+    }
+    
+    // Move
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        print("sourceIndexPath: ", sourceIndexPath, "destinationIndexPath", destinationIndexPath)
     }
     
     // MARK: - Navigation

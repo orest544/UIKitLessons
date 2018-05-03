@@ -25,10 +25,10 @@ func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedStri
 }
 
 class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardCurrencyConverterDelegate {
-    let keyboardView = KeyboardCurrencyConverter(frame: CGRect(x: 0, y: 0, width: 0, height: 230))
+    let keyboardView = KeyboardCurrencyConverter(frame: CGRect(x: 0, y: 0, width: 0, height: 203))
     
     var currencyNamesArray = [String]()
-    var allActiveTextFieldsArray = [UITextField]()
+    //var allActiveTextFieldsArray = [UITextField]()
     var textFieldsDict = [UITextField: String]()
     
     var currentCurrencyCC = "UAH"
@@ -44,6 +44,11 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
     }()
     
     let myAttributeGray = [NSAttributedStringKey.foregroundColor: UIColor.gray]
+    
+    var currentResultsDict = [String: Double]()
+    
+    @IBOutlet var myTableView: UITableView!
+    @IBOutlet weak var editButton: UIButton!
     
 //    override func loadView() {
 //        super.loadView()
@@ -67,7 +72,11 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         let array = UserDefaults.standard.object(forKey: "currencyNamesArray") as! [String]
         self.currencyNamesArray = array
         tableView.reloadData()
-
+        
+        for cc in self.currencyNamesArray {
+            self.currentResultsDict[cc] = 0.0
+        }
+        
         //        let appDelegate = UIApplication.shared.delegate as! AppDelegate
 //        let context = appDelegate.persistentContainer.viewContext
 //       
@@ -142,7 +151,6 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
 
     // Configure the cells
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
 
         // Configure the cell
@@ -150,12 +158,17 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         cell.imageViewFlag?.image = UIImage(named: currencyNamesArray[0 /*indexPath.row*/]) //CHANGES FOR DEV
         cell.textField.tintColor = .clear
         
-        // replace system keyboard with custom keyboard
+        // Replace system keyboard with custom keyboard
         cell.textField.inputView = keyboardView
         
-        allActiveTextFieldsArray.append(cell.textField) //all textfield has unique code
+        let doubleValueForCurrentTextField = self.currentResultsDict[currencyNamesArray[indexPath.row]]!
+        let stringValueForCurrentTextField = formatter.string(from: NSNumber(value: doubleValueForCurrentTextField))!
+        cell.textField.text = stringValueForCurrentTextField
+    
+        // Current 14 cells
         textFieldsDict[cell.textField] = currencyNamesArray[indexPath.row]
         print("newCell")
+        
         return cell
     }
     
@@ -210,7 +223,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
                 left.removeLast()
             }
             
-            leftFormatted = formatter.string(from: NSNumber(value: Int(left)!))!
+            leftFormatted = formatter.string(from: NSNumber(value: Int(left) ?? 0))!
             
             if separatedText.count > 1 {
                 right = separatedText[1]
@@ -229,15 +242,31 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         
     }
     
-    override public func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return false
-    }
-    
-    // Entering point from editing tableView
+    // Entering point from EditViewController
     @IBAction func unwindSegue(_ sender: UIStoryboardSegue) {
-        //currencyNamesArray = ["UAH", "RUB"]
+        
+        // Append into the dict All new currencies
+        for cc in self.currencyNamesArray {
+            self.currentResultsDict[cc] = 0.0
+        }
+        
         tableView.reloadData()
         self.keyboardView.enableAllNumberKeys()
+    }
+    
+    // Moving
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let cc = self.currencyNamesArray[sourceIndexPath.row]
+        self.currencyNamesArray.remove(at: sourceIndexPath.row)
+        self.currencyNamesArray.insert(cc, at: destinationIndexPath.row)
+    }
+    
+    override public func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        return false
     }
     
     // Select a row
@@ -253,27 +282,38 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         //print("cell selected") //, cell.textField)
     }
     
+    @IBAction func editButton(_ sender: UIButton) {
+        myTableView.isEditing = !myTableView.isEditing
+        
+        
+        
+//        if myTableView.isEditing {
+//            myTableView.setEditing(false, animated: true)
+//        } else {
+//
+//            myTableView.setEditing(true, animated: true)
+//        }
+        
+        if myTableView.isEditing {
+            editButton.setTitle("Done", for: .normal)
+        } else {
+            editButton.setTitle("Edit", for: .normal)
+        }
+       // myTableVIew.reloadData()
+    }
+    
     // MARK: - TextFieldDelegate
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         print("begin editing")
-        //textField.text = ""
         
-        //clean the array with all other textFields exept the choosen
-        self.allActiveTextFieldsArray = []
-        
-        //set the choosen currency
+        // Set the choosen currency
         if let cc = self.textFieldsDict[textField] {
             self.currentCurrencyCC = cc
         }
         
-        //fill an array with all other textFields exept the choosen
-        for value in self.textFieldsDict.keys {
-            self.allActiveTextFieldsArray.append(value)
-        }
-        self.allActiveTextFieldsArray = self.allActiveTextFieldsArray.filter {
-            return $0 == textField ? false : true
-        }
+        // Remove from dict current TextFeild
+        textFieldsDict.removeValue(forKey: textField)
     }
     
     @IBAction func editingChange(_ sender: UITextField) {
@@ -283,39 +323,59 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         let resultTuple = myFormatter(text)
         
         sender.text = resultTuple.textForTextField
-        
         let value: Double = resultTuple.numberForCalculations
-    
-        let ccKeyOfChoosenTextField = self.textFieldsDict[sender]!
-        let exchangeValueOfCurrencyChoosenTextField = CurrencyData.currencyDict[ccKeyOfChoosenTextField]!
         
-        for someCurrencyTextField in self.allActiveTextFieldsArray {
+        self.currentResultsDict[self.currentCurrencyCC] = value
+        var tempCurrentResultsDict = currentResultsDict
+        tempCurrentResultsDict.removeValue(forKey: self.currentCurrencyCC)
+        
+        let exchangeValueOfCurrencyChoosenTextField = CurrencyData.currencyDict[self.currentCurrencyCC]!
+
+        for someCurrencyTextField in self.textFieldsDict.keys {
             let ccKey = self.textFieldsDict[someCurrencyTextField]!
-            let valueForCCKey = CurrencyData.currencyDict[ccKey]!
+            let exchangeValueForCCKey = CurrencyData.currencyDict[ccKey]!
             
-            //all transformations via UAH [Chosen currency -> UAH -> direct currency]
-            let result = (value * exchangeValueOfCurrencyChoosenTextField / valueForCCKey).rounded(toPlaces: 2)
+            // All transformations via UAH [Chosen currency -> UAH -> direct currency]
+            let result = (value * exchangeValueOfCurrencyChoosenTextField / exchangeValueForCCKey).rounded(toPlaces: 2)
             print("result = \(result)")
             
             if result == 0.0 {
                 someCurrencyTextField.text = "0"
+                currentResultsDict[ccKey] = 0.0
             } else {
                 someCurrencyTextField.text = formatter.string(from: NSNumber(value: result))
+                currentResultsDict[ccKey] = result
+            }
+            
+            tempCurrentResultsDict.removeValue(forKey: ccKey)
+        }
+        
+        for ccKey in tempCurrentResultsDict.keys {
+            let valueForCCKey = CurrencyData.currencyDict[ccKey]!
+            
+            //all transformations via UAH [Chosen currency -> UAH -> direct currency]
+            let result = (value * exchangeValueOfCurrencyChoosenTextField / valueForCCKey).rounded(toPlaces: 2)
+            
+            if result == 0.0 {
+                currentResultsDict[ccKey] = 0.0
+            } else {
+                currentResultsDict[ccKey] = result
             }
         }
-         print(sender.text! ,value)
+
+        print(sender.text! ,value)
         
-        print("allActiveTextFieldArr = \(allActiveTextFieldsArray.count), textFieldsDict: \n\(textFieldsDict.count, " ", textFieldsDict)")
+        print(tempCurrentResultsDict)
     }
     
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         print("end editing")
         
+        self.textFieldsDict[currentTextField] = self.currentCurrencyCC
         textField.isEnabled = false
         self.firstTimeChangedTrigger = true
     }
-    
     
     // MARK - Methods of custom keyboard delegate
     

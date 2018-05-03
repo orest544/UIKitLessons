@@ -104,6 +104,7 @@ class CurrencyData: NSObject {
             
             do {
                 CurrencyData.currencys = try JSONDecoder().decode([Currency].self, from: data)
+                
                 let uahCurrencyObj = Currency(r030: 0, txt: "Ukrainian Hryvnia", rate: 1.0, cc: "UAH", exchangedate: "23.06.1997")
                 CurrencyData.currencys.append(uahCurrencyObj)
                 
@@ -140,7 +141,7 @@ class CurrencyData: NSObject {
                         CurrencyData.currencysDatabase = try context.fetch(CurrencyDatabase.fetchRequest())
                         
                         for currency in CurrencyData.currencysDatabase {
-                            print(currency.cc ,"\n", currency.rate)
+                            print("Currencies from DATABASE: ", currency.cc ,"\n", currency.rate)
                         }
                     } catch {
                         print(err?.localizedDescription as Any)
