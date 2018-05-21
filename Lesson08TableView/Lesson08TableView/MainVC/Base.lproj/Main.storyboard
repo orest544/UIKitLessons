@@ -7,7 +7,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -21,33 +20,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <view key="tableHeaderView" contentMode="scaleToFill" id="LEG-c5-Pcz">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xqj-DE-rAb">
-                                    <rect key="frame" x="309" y="6" width="50" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" title="Edit"/>
-                                    <connections>
-                                        <action selector="editButton:" destination="uzU-1S-TdH" eventType="touchUpInside" id="tR1-QZ-vFk"/>
-                                    </connections>
-                                </button>
-                            </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        </view>
+                        <inset key="separatorInset" minX="15" minY="0.0" maxX="12" maxY="0.0"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" rowHeight="60" id="a80-pf-D0Q" customClass="CustomTableViewCell" customModule="Lesson08TableView" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="72" width="375" height="60"/>
+                                <rect key="frame" x="0.0" y="28" width="375" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="a80-pf-D0Q" id="KFM-ap-e1N">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UPR-hg-E1B">
-                                            <rect key="frame" x="16" y="11" width="34" height="24"/>
+                                            <rect key="frame" x="15" y="11" width="34" height="24"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" secondItem="UPR-hg-E1B" secondAttribute="height" multiplier="17:12" id="AuB-SD-4oh"/>
                                                 <constraint firstAttribute="width" constant="34" id="FCW-NY-oRX"/>
                                                 <constraint firstAttribute="height" constant="24" id="St0-Om-4XN"/>
                                             </constraints>
@@ -67,15 +51,13 @@
                                             </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="editingChange:" destination="uzU-1S-TdH" eventType="editingChanged" id="WOO-NP-tTB"/>
-                                                <action selector="valueChanged:" destination="uzU-1S-TdH" eventType="valueChanged" id="f8A-hC-aSe"/>
                                                 <outlet property="delegate" destination="uzU-1S-TdH" id="ffU-z2-r6c"/>
                                             </connections>
                                         </textField>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UAH" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fFe-Qd-wyW">
-                                            <rect key="frame" x="16" y="34" width="44" height="22"/>
+                                            <rect key="frame" x="15" y="34" width="44" height="22"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="44" id="7uk-6Q-ESL"/>
-                                                <constraint firstAttribute="width" secondItem="fFe-Qd-wyW" secondAttribute="height" multiplier="2:1" id="aDy-J1-hmc"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
                                             <nil key="textColor"/>
@@ -85,7 +67,6 @@
                                             <rect key="frame" x="199" y="34" width="164" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="Ezu-S9-6dd"/>
-                                                <constraint firstAttribute="width" secondItem="KIX-cd-EP0" secondAttribute="height" multiplier="164:21" id="Yxb-e9-ISH"/>
                                                 <constraint firstAttribute="width" constant="164" id="v7b-C3-OXJ"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -96,7 +77,6 @@
                                             <rect key="frame" x="350" y="7" width="13" height="29"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="13" id="0Nc-eh-qwQ"/>
-                                                <constraint firstAttribute="width" secondItem="ID8-LW-DPc" secondAttribute="height" multiplier="13:29" id="iES-js-AJ1"/>
                                                 <constraint firstAttribute="height" constant="29" id="lYs-wv-pgq"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
@@ -104,17 +84,17 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4oq-VX-Yqm">
-                                            <rect key="frame" x="0.0" y="-1" width="375" height="60"/>
+                                            <rect key="frame" x="0.0" y="-1" width="375" height="62"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </subviews>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
-                                        <constraint firstItem="UPR-hg-E1B" firstAttribute="leading" secondItem="KFM-ap-e1N" secondAttribute="leadingMargin" id="0zc-Fo-m6x"/>
+                                        <constraint firstItem="UPR-hg-E1B" firstAttribute="leading" secondItem="KFM-ap-e1N" secondAttribute="leadingMargin" constant="-1" id="0zc-Fo-m6x"/>
                                         <constraint firstAttribute="bottom" secondItem="KIX-cd-EP0" secondAttribute="bottom" constant="4.5" id="2Dt-D2-twE"/>
                                         <constraint firstItem="UPR-hg-E1B" firstAttribute="top" secondItem="KFM-ap-e1N" secondAttribute="topMargin" id="5hB-MK-les"/>
-                                        <constraint firstItem="P9g-cA-GuF" firstAttribute="leading" secondItem="UPR-hg-E1B" secondAttribute="trailing" constant="27" id="Cd5-Em-ykR"/>
+                                        <constraint firstItem="P9g-cA-GuF" firstAttribute="leading" secondItem="UPR-hg-E1B" secondAttribute="trailing" constant="28" id="Cd5-Em-ykR"/>
                                         <constraint firstAttribute="trailing" secondItem="4oq-VX-Yqm" secondAttribute="trailing" id="JBJ-W2-sxu"/>
                                         <constraint firstItem="P9g-cA-GuF" firstAttribute="top" secondItem="KFM-ap-e1N" secondAttribute="top" constant="7" id="R8E-PK-4Y5"/>
                                         <constraint firstItem="4oq-VX-Yqm" firstAttribute="leading" secondItem="KFM-ap-e1N" secondAttribute="leading" id="SQr-vs-HEN"/>
@@ -143,10 +123,6 @@
                             <outlet property="delegate" destination="uzU-1S-TdH" id="Art-rs-HOk"/>
                         </connections>
                     </tableView>
-                    <connections>
-                        <outlet property="editButton" destination="Xqj-DE-rAb" id="dZX-yN-YTY"/>
-                        <outlet property="myTableView" destination="85p-v5-C58" id="bIe-9P-L7j"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5lT-g6-0re" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

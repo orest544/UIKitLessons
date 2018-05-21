@@ -94,11 +94,13 @@ class CurrencyData: NSObject {
         URLSession.shared.dataTask(with: currencyUrl) { (data, response, err) in
             if let err = err {
                 CurrencyData.check = false
+                completionHandler()
                 print(err.localizedDescription)
             }
             
             guard let data = data else {
                 CurrencyData.check = false
+                completionHandler()
                 return
             }
             
@@ -158,10 +160,13 @@ class CurrencyData: NSObject {
             } catch let jsonErr {
                 CurrencyData.check = false
                 print("Error from do catch", jsonErr)
+                completionHandler()
             }
-
+            
             print("LOAD FUNC ENDED")
+            
             completionHandler()
+            
         }.resume()
     }
 }

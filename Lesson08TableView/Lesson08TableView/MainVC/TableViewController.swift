@@ -17,25 +17,9 @@ extension Double {
     }
 }
 
-func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedString {
-    let result = NSMutableAttributedString()
-    result.append(left)
-    result.append(right)
-    return result
-}
-
 class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardCurrencyConverterDelegate {
+    
     let keyboardView = KeyboardCurrencyConverter(frame: CGRect(x: 0, y: 0, width: 0, height: 203))
-    
-    var currencyNamesArray = [String]()
-    //var allActiveTextFieldsArray = [UITextField]()
-    var textFieldsDict = [UITextField: String]()
-    
-    var currentCurrencyCC = "UAH"
-    var currentTextField = UITextField()
-    
-    var firstTimeChangedTrigger = true
-    
     let formatter: NumberFormatter = {
         let _formatter = NumberFormatter()
         _formatter.numberStyle = .decimal
@@ -43,21 +27,28 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         return _formatter
     }()
     
-    let myAttributeGray = [NSAttributedStringKey.foregroundColor: UIColor.gray]
-    
+    var currencyNamesArray = [String]()
+    var textFieldsDict = [UITextField: String]()
     var currentResultsDict = [String: Double]()
     
-    @IBOutlet var myTableView: UITableView!
-    @IBOutlet weak var editButton: UIButton!
+    var currentCurrencyCC = "UAH"
+    var currentTextField = UITextField()
     
-//    override func loadView() {
-//        super.loadView()
-//        print("I AM LOADVIEW!")
-//    }
+    var firstTimeChangedTrigger = true
+    
+    lazy var refresher: UIRefreshControl = {
+        let refresher = UIRefreshControl()
+        refresher.backgroundColor = .clear
+        refresher.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        
+        return refresher
+    }()
+    
+    
+    // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //self.view.center.y = 0
         
         // Uncomment the following line to preserve selection between presentations
         //self.clearsSelectionOnViewWillAppear = false
@@ -77,69 +68,23 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
             self.currentResultsDict[cc] = 0.0
         }
         
-        //        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-//        let context = appDelegate.persistentContainer.viewContext
-//       
-//        //fetch
-//        do {
-//            CurrencyData.currencysDatabase = try context.fetch(CurrencyDatabase.fetchRequest())
-//            for currency in CurrencyData.currencysDatabase {
-//                print(currency.cc, currency.rate)
-//            }
-//        } catch {
-//            print(error.localizedDescription as Any)
-//        }
-        
-        // options for animation
-        //self.view.frame.origin.y = -250
+        tableView.addSubview(refresher)
+
+        tableView.isUserInteractionEnabled = false
         
         print("I AM VIEW DID LOAD!")
-        
     }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(true)
-//        self.tableView.frame.origin.y = -200
-//    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         
-//        UIView.animate(withDuration: 0.5) {
-//            self.allActiveTextFieldsArray[0].becomeFirstResponder()
-//            self.view.frame.origin.y = 0.0
-//        }
-        
-//        UIView.animate(withDuration: 0.7) {
-//            self.tableView.frame.origin.y = 0
-//            let index = IndexPath(row: 0, section: 0)
-//            print(self.firstCellIndexPath)
-//            let cell = self.tableView.cellForRow(at: index) as! CustomTableViewCell
-//
-//            self.tableView.selectRow(at: index, animated: true, scrollPosition: .top)
-//            cell.textField.isEnabled = true
-//            cell.textField.becomeFirstResponder()
-//            self.currentTextField = cell.textField
-//        }
-        
-       
-//        let index = IndexPath(row: 0, section: 0)
-//        print(self.firstCellIndexPath)
-//        let cell = self.tableView.cellForRow(at: index) as! CustomTableViewCell
-//
-//        self.tableView.selectRow(at: index, animated: true, scrollPosition: .top)
-//        cell.textField.isEnabled = true
-//        cell.textField.becomeFirstResponder()
-//        self.currentTextField = cell.textField
-        
-        //to choose the 1st row by default and helps the user to get keyboard already
-        let topVisibleIndexPath: IndexPath = self.tableView.indexPathsForVisibleRows![0]
-        let cell = self.tableView.cellForRow(at: topVisibleIndexPath) as! CustomTableViewCell
-        
-        self.tableView.selectRow(at: topVisibleIndexPath, animated: true, scrollPosition: .none	)
-        cell.textField.isEnabled = true
-        cell.textField.becomeFirstResponder()
-        self.currentTextField = cell.textField
+        chooseFirstVisibleCell{
+            let deadline = DispatchTime.now() + .milliseconds(500)
+
+            DispatchQueue.main.asyncAfter(deadline: deadline, execute: {
+                self.tableView.isUserInteractionEnabled = true
+            })
+        }
     }
     
     // MARK: - Table view creation
@@ -171,7 +116,6 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         
         return cell
     }
-    
     
     /*
     // Override to support conditional editing of the table view.
@@ -208,6 +152,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
     }
     */
 
+    
     // MARK: - Methods
     
     func myFormatter(_ text: String) -> (textForTextField: String, numberForCalculations: Double) {
@@ -239,7 +184,30 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         
         return separatedText.count > 1 ? (leftFormatted + "." + right, Double(left + "." + right) ?? 0.0)
             : (leftFormatted, Double(left) ?? 0.0)
+    }
+    
+    // To choose the 1st row by default and helps the user to get keyboard already
+    func chooseFirstVisibleCell( completionHandler: @escaping () -> () ) {
+        let topVisibleIndexPath: IndexPath = self.tableView.indexPathsForVisibleRows![0]
+        let cell = self.tableView.cellForRow(at: topVisibleIndexPath) as! CustomTableViewCell
         
+        self.tableView.selectRow(at: topVisibleIndexPath, animated: true, scrollPosition: .none)
+        cell.textField.isEnabled = true
+        cell.textField.becomeFirstResponder()
+        self.currentTextField = cell.textField
+        
+        completionHandler()
+    }
+    
+    // Refresher target
+    @objc func refreshData() {
+        CurrencyData.loadCurrencyData{
+            let deadline = DispatchTime.now() + .milliseconds(700)
+            
+            DispatchQueue.main.asyncAfter(deadline: deadline, execute: {
+                self.refresher.endRefreshing()
+            })
+        }
     }
     
     // Entering point from EditViewController
@@ -254,11 +222,25 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         self.keyboardView.enableAllNumberKeys()
     }
     
+    // Select a row
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("cell selected")
+        
+        let cell = tableView.cellForRow(at: indexPath) as! CustomTableViewCell
+        cell.textField.isEnabled = true
+        cell.textField.becomeFirstResponder()
+        currentTextField = cell.textField
+        
+        self.keyboardView.enableAllNumberKeys()
+        //print("cell selected") //, cell.textField)
+    }
+    
     // Moving
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         return true
     }
     
+    // Moving
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let cc = self.currencyNamesArray[sourceIndexPath.row]
         self.currencyNamesArray.remove(at: sourceIndexPath.row)
@@ -269,38 +251,6 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         return false
     }
     
-    // Select a row
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("cell selected")
-
-        let cell = tableView.cellForRow(at: indexPath) as! CustomTableViewCell
-        cell.textField.isEnabled = true
-        cell.textField.becomeFirstResponder()
-        currentTextField = cell.textField
-        
-        self.keyboardView.enableAllNumberKeys()
-        //print("cell selected") //, cell.textField)
-    }
-    
-    @IBAction func editButton(_ sender: UIButton) {
-        myTableView.isEditing = !myTableView.isEditing
-        
-        
-        
-//        if myTableView.isEditing {
-//            myTableView.setEditing(false, animated: true)
-//        } else {
-//
-//            myTableView.setEditing(true, animated: true)
-//        }
-        
-        if myTableView.isEditing {
-            editButton.setTitle("Done", for: .normal)
-        } else {
-            editButton.setTitle("Edit", for: .normal)
-        }
-       // myTableVIew.reloadData()
-    }
     
     // MARK: - TextFieldDelegate
     
@@ -377,7 +327,8 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
         self.firstTimeChangedTrigger = true
     }
     
-    // MARK - Methods of custom keyboard delegate
+    
+    // MARK: - Methods of custom keyboard delegate
     
     func numberKeyWasTapped(character: String) {
         if self.firstTimeChangedTrigger && character != "" {
@@ -426,6 +377,8 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
     }
     
     func editKeyWasTapped() {
+        tableView.isUserInteractionEnabled = false
+        
         let editVC = self.storyboard?.instantiateViewController(withIdentifier: "EditViewController") as! EditViewController
         editVC.chosenCurrencyNamesArray = self.currencyNamesArray
         
@@ -442,156 +395,3 @@ class TableViewController: UITableViewController, UITextFieldDelegate, KeyboardC
     */
     
 }
-
-/*
-
-print("editing changed")
-
-var oldText = sender.text!.replacingOccurrences(of: ",", with: "")
-
-if sender.text?.last != "." {
-    let formattedText = self.formatter.string(from: NSNumber(value: Double(oldText) ?? 0))
-    
-    sender.text = formattedText
-}
-
-if sender.text == "0" {
-    sender.text = ""
-}
-
-var value: Double = 0.0
-if let text = sender.text {
-    if let _value = Double(text) {
-        value = _value
-    }
-}
-
-let ccKeyOfChoosenTextField = self.textFieldsDict[sender]!
-let exchangeValueOfCurrencyChoosenTextField = CurrencyData.currencyDict[ccKeyOfChoosenTextField]!
-
-for someCurrencyTextField in self.allActiveTextFieldsArray {
-    let ccKey = self.textFieldsDict[someCurrencyTextField]!
-    let valueForCCKey = CurrencyData.currencyDict[ccKey]!
-    
-    //all transformations via UAH [Chosen currency -> UAH -> direct currency]
-    let result = (value * exchangeValueOfCurrencyChoosenTextField / valueForCCKey).rounded(toPlaces: 2)
-    print("result = \(result)")
-    
-    if result == 0.0 {
-        someCurrencyTextField.text = "0"
-    } else {
-        //                var resultStr = String(result)
-        //                let twoLast = "5"
-        //                print("twoLast = \(String(describing: twoLast))")
-        //
-        //                let myAttribute = [NSAttributedStringKey.foregroundColor: UIColor.gray/*, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 22.0)*/]
-        //                let myAttribute2 = [NSAttributedStringKey.foregroundColor: UIColor.black]
-        //
-        //                let twoLastAttributed = NSAttributedString(string: String(twoLast), attributes: myAttribute)
-        //                let resultStrAtt = NSAttributedString(string: resultStr, attributes: myAttribute2)
-        //                //resultStr += String(twoLastAttributed)
-        
-        
-        someCurrencyTextField.text = String(result)//resultStrAtt + twoLastAttributed//String(result)
-    }
-}
-print(sender.text! ,value)*/
-
-
-/*print("editing changed")
- 
- let oldText = sender.text!.replacingOccurrences(of: ",", with: "")
- 
- if sender.text?.last != "." {
- let formattedText = self.formatter.string(from: NSNumber(value: Double(oldText) ?? 0))
- 
- sender.text = formattedText
- }
- 
- if oldText == "0" {
- sender.text = ""
- }
- 
- var value: Double = 0.0
- 
- if let _value = Double(oldText) {
- value = _value
- }
- 
- let ccKeyOfChoosenTextField = self.textFieldsDict[sender]!
- let exchangeValueOfCurrencyChoosenTextField = CurrencyData.currencyDict[ccKeyOfChoosenTextField]!
- 
- for someCurrencyTextField in self.allActiveTextFieldsArray {
- let ccKey = self.textFieldsDict[someCurrencyTextField]!
- let valueForCCKey = CurrencyData.currencyDict[ccKey]!
- 
- //all transformations via UAH [Chosen currency -> UAH -> direct currency]
- let result = (value * exchangeValueOfCurrencyChoosenTextField / valueForCCKey).rounded(toPlaces: 2)
- print("result = \(result)")
- 
- if result == 0.0 {
- someCurrencyTextField.text = "0"
- } else {
- someCurrencyTextField.text = formatter.string(from: NSNumber(value: result))
- }
- }
- print(sender.text! ,value)*/
-
-
-
-/* @IBAction func editingChange(_ sender: UITextField) {
- print("editing changed")
- 
- let text = sender.text!
- 
- let separatedStr = text.components(separatedBy: ".")
- print("separatedStr: ", separatedStr)
- 
- var twoLast: String?
- if text.index(of: ".") != nil {
- twoLast = separatedStr[1]
- }
- 
- if (sender.text?.count)! > 14 && !(twoLast != nil && (twoLast?.count ?? 0) < 2) {
- self.keyboardView.disableAllNumberKeys()
- } else {
- self.keyboardView.enableAllNumberKeys()
- }
- 
- let oldText = sender.text!.replacingOccurrences(of: ",", with: "")
- 
- if !(twoLast != nil && (twoLast?.count ?? 0) < 2) { //sender.text?.last != "." {
- let formattedText = self.formatter.string(from: NSNumber(value: Double(oldText) ?? 0))
- 
- sender.text = formattedText
- }
- 
- if oldText == "0" {
- sender.text = ""
- }
- 
- var value: Double = 0.0
- 
- if let _value = Double(oldText) {
- value = _value
- }
- 
- let ccKeyOfChoosenTextField = self.textFieldsDict[sender]!
- let exchangeValueOfCurrencyChoosenTextField = CurrencyData.currencyDict[ccKeyOfChoosenTextField]!
- 
- for someCurrencyTextField in self.allActiveTextFieldsArray {
- let ccKey = self.textFieldsDict[someCurrencyTextField]!
- let valueForCCKey = CurrencyData.currencyDict[ccKey]!
- 
- //all transformations via UAH [Chosen currency -> UAH -> direct currency]
- let result = (value * exchangeValueOfCurrencyChoosenTextField / valueForCCKey).rounded(toPlaces: 2)
- print("result = \(result)")
- 
- if result == 0.0 {
- someCurrencyTextField.text = "0"
- } else {
- someCurrencyTextField.text = formatter.string(from: NSNumber(value: result))
- }
- }
- print(sender.text! ,value)
- }*/

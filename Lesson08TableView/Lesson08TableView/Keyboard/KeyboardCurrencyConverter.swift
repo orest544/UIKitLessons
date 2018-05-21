@@ -70,7 +70,6 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
         
         button_0.setBackgroundImage(UIImage(named: "buttonZero"), for: .normal)
         button_dot.setBackgroundImage(UIImage(named: "buttonDot"), for: .normal)
-        
         button_C.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
         button_backspace.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
         button_edit.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
@@ -126,7 +125,6 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
     // MARK: - Button actions from .xib file
     
     @IBAction func keyTapped(_ sender: UIButton) {
-        
         
         // When a button is tapped, send that information to the
         // delegate (ie, the view controller)

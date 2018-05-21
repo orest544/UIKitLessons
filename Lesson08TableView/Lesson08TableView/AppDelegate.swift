@@ -59,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print(error.localizedDescription as Any)
         }
         
-        CurrencyData.loadCurrencyData(completionHandler: {})
+        CurrencyData.loadCurrencyData{ }
         
         // Disable shake to edit
         UIApplication.shared.applicationSupportsShakeToEdit = false
@@ -67,11 +67,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Make status bar not transparent
         let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView
         statusBar?.backgroundColor = .white
-        
-        
-        //UIApplication.shared.statusBarStyle = .lightContent
-        
-        // Firs launch after download
+    
+        // First launch after download
         let defaults = UserDefaults.standard
         
         if defaults.object(forKey: "firstTimeLaunch") == nil {
@@ -82,14 +79,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             return true
         }
-        
-        let alertController = UIAlertController(title: "f", message: "f", preferredStyle: .alert)
-        
-        let alertAction = UIAlertAction(title: "", style: .cancel, handler: nil)
-        
-        alertController.addAction(alertAction)
-        
-        self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
         
         return true
     }
