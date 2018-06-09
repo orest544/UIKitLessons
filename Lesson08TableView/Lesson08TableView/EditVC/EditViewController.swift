@@ -10,8 +10,6 @@ import UIKit
 
 class EditViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    @IBOutlet weak var editTableView: UITableView!
-    
     var chosenCurrencyNamesArray = [String]()
     var allCurrencyNamesArray = [String]()
     var sortedCurrencyNamesArray = [String]()
@@ -33,11 +31,6 @@ class EditViewController: UIViewController, UITableViewDataSource, UITableViewDe
             sortedCurrencyNamesArray.insert(cc, at: 0)
         }
     }
-
-    @IBAction func editButton(_ sender: UIButton) {
-       // editTableView.isEditing = !editTableView.isEditing
-        editTableView.setEditing(true, animated: true)
-    }
     
     // MARK: - TableViewDataSource
     
@@ -47,10 +40,16 @@ class EditViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     // Creating a cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
-        cell.textLabel?.text = sortedCurrencyNamesArray[indexPath.row]
+        let cell = UITableViewCell(style: .default, reuseIdentifier: "EditCell")
         
-        if chosenCurrencyNamesArray.index(of: sortedCurrencyNamesArray[indexPath.row]) != nil {
+        cell.textLabel?.text = sortedCurrencyNamesArray[indexPath.row]
+        cell.tintColor = .black
+        cell.backgroundColor = UIColor(red: 239, green: 239, blue: 244)
+        cell.contentView.backgroundColor = UIColor(red: 239, green: 239, blue: 244)
+        cell.accessoryView?.backgroundColor = UIColor(red: 239, green: 239, blue: 244)
+    
+        if chosenCurrencyNamesArray.index(of:
+            sortedCurrencyNamesArray[indexPath.row]) != nil {
             cell.accessoryType = .checkmark
         }
         
@@ -89,7 +88,7 @@ class EditViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         
-        let tableVC = segue.destination as! TableViewController
+        let tableVC = segue.destination as! MainViewController
         tableVC.currencyNamesArray = chosenCurrencyNamesArray
     }
     

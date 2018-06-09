@@ -66,7 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Make status bar not transparent
         let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView
-        statusBar?.backgroundColor = .white
+        statusBar?.backgroundColor = UIColor(red: 239, green: 239, blue: 244)
     
         // First launch after download
         let defaults = UserDefaults.standard

@@ -75,10 +75,10 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
         button_edit.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
         button_hide.setBackgroundImage(UIImage(named: "buttonHideGray"), for: .normal)
 
-        button_C.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
-        button_backspace.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
-        button_hide.setBackgroundImage(UIImage(named: "buttonHideGray"), for: .highlighted)
-        button_edit.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
+       //button_C.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
+       // button_backspace.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
+       // button_hide.setBackgroundImage(UIImage(named: "buttonHideGray"), for: .highlighted)
+        //button_edit.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
     }
     
     func buttonConfigurating(_ sender: UIButton) {

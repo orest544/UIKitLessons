@@ -10,14 +10,14 @@
 		044224DB1FBB3D5800CB54CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044224DA1FBB3D5800CB54CC /* AppDelegate.swift */; };
 		044224E01FBB3D5800CB54CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 044224DE1FBB3D5800CB54CC /* Main.storyboard */; };
 		044224E31FBB3D5800CB54CC /* CurrencyDatabase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 044224E11FBB3D5800CB54CC /* CurrencyDatabase.xcdatamodeld */; };
-		044224E51FBB3D5800CB54CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 044224E41FBB3D5800CB54CC /* Assets.xcassets */; };
 		044224E81FBB3D5800CB54CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 044224E61FBB3D5800CB54CC /* LaunchScreen.storyboard */; };
-		044224F01FBB3DBA00CB54CC /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044224EF1FBB3DBA00CB54CC /* TableViewController.swift */; };
 		044224FA1FBB46D900CB54CC /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044224F91FBB46D900CB54CC /* CustomTableViewCell.swift */; };
+		045895E320B36514002CF86D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045895E220B36514002CF86D /* MainViewController.swift */; };
 		046B81F120405F21000A5939 /* KeyboardCurrencyConverter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 046B81F020405F21000A5939 /* KeyboardCurrencyConverter.xib */; };
 		046B81F32040612D000A5939 /* KeyboardCurrencyConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046B81F22040612D000A5939 /* KeyboardCurrencyConverter.swift */; };
 		049A8FE2204755FF0039C3FF /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049A8FE1204755FF0039C3FF /* EditViewController.swift */; };
 		04C674731FD0A97000A22E3B /* CurrencyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04C674721FD0A97000A22E3B /* CurrencyData.swift */; };
+		04FEE18220C45B6A00481A9B /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04FEE18120C45B6A00481A9B /* Media.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,15 +25,15 @@
 		044224DA1FBB3D5800CB54CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		044224DF1FBB3D5800CB54CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		044224E21FBB3D5800CB54CC /* Lesson08TableView.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Lesson08TableView.xcdatamodel; sourceTree = "<group>"; };
-		044224E41FBB3D5800CB54CC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		044224E71FBB3D5800CB54CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		044224E91FBB3D5800CB54CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		044224EF1FBB3DBA00CB54CC /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		044224F91FBB46D900CB54CC /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
+		045895E220B36514002CF86D /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		046B81F020405F21000A5939 /* KeyboardCurrencyConverter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = KeyboardCurrencyConverter.xib; sourceTree = "<group>"; };
 		046B81F22040612D000A5939 /* KeyboardCurrencyConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardCurrencyConverter.swift; sourceTree = "<group>"; };
 		049A8FE1204755FF0039C3FF /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		04C674721FD0A97000A22E3B /* CurrencyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyData.swift; sourceTree = "<group>"; };
+		04FEE18120C45B6A00481A9B /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +79,7 @@
 				049A8FE0204755020039C3FF /* EditVC */,
 				046B81F42040641A000A5939 /* Keyboard */,
 				04283B49204C821C0012C45B /* CoreData */,
-				044224E41FBB3D5800CB54CC /* Assets.xcassets */,
+				04FEE18120C45B6A00481A9B /* Media.xcassets */,
 				044224E61FBB3D5800CB54CC /* LaunchScreen.storyboard */,
 				044224E91FBB3D5800CB54CC /* Info.plist */,
 			);
@@ -99,7 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				04C674721FD0A97000A22E3B /* CurrencyData.swift */,
-				044224EF1FBB3DBA00CB54CC /* TableViewController.swift */,
+				045895E220B36514002CF86D /* MainViewController.swift */,
 				044224F91FBB46D900CB54CC /* CustomTableViewCell.swift */,
 				044224DE1FBB3D5800CB54CC /* Main.storyboard */,
 			);
@@ -174,8 +174,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				044224E81FBB3D5800CB54CC /* LaunchScreen.storyboard in Resources */,
-				044224E51FBB3D5800CB54CC /* Assets.xcassets in Resources */,
 				046B81F120405F21000A5939 /* KeyboardCurrencyConverter.xib in Resources */,
+				04FEE18220C45B6A00481A9B /* Media.xcassets in Resources */,
 				044224E01FBB3D5800CB54CC /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -187,9 +187,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				045895E320B36514002CF86D /* MainViewController.swift in Sources */,
 				046B81F32040612D000A5939 /* KeyboardCurrencyConverter.swift in Sources */,
 				044224E31FBB3D5800CB54CC /* CurrencyDatabase.xcdatamodeld in Sources */,
-				044224F01FBB3DBA00CB54CC /* TableViewController.swift in Sources */,
 				044224FA1FBB46D900CB54CC /* CustomTableViewCell.swift in Sources */,
 				04C674731FD0A97000A22E3B /* CurrencyData.swift in Sources */,
 				044224DB1FBB3D5800CB54CC /* AppDelegate.swift in Sources */,
