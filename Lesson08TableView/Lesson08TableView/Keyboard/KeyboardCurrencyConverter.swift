@@ -67,18 +67,16 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
         buttonConfigurating(button_7)
         buttonConfigurating(button_8)
         buttonConfigurating(button_9)
-        
-        button_0.setBackgroundImage(UIImage(named: "buttonZero"), for: .normal)
-        button_dot.setBackgroundImage(UIImage(named: "buttonDot"), for: .normal)
-        button_C.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
-        button_backspace.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
-        button_edit.setBackgroundImage(UIImage(named: "buttonGray"), for: .normal)
-        button_hide.setBackgroundImage(UIImage(named: "buttonHideGray"), for: .normal)
+                        
+        button_0.setBackgroundImage(UIImage(named: "buttonZero2"), for: .normal)
+        button_dot.setBackgroundImage(UIImage(named: "buttonDot2"), for: .normal)
+        button_C.setBackgroundImage(UIImage(named: "buttonGray2"), for: .normal)
+        button_backspace.setBackgroundImage(UIImage(named: "buttonGray2"), for: .normal)
+        button_edit.setBackgroundImage(UIImage(named: "buttonGray2"), for: .normal)
+        button_hide.setBackgroundImage(UIImage(named: "buttonHideGray2"), for: .normal)
 
-       //button_C.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
-       // button_backspace.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
-       // button_hide.setBackgroundImage(UIImage(named: "buttonHideGray"), for: .highlighted)
-        //button_edit.setBackgroundImage(UIImage(named: "buttonGray"), for: .highlighted)
+        button_edit.imageView?.contentMode = .scaleAspectFit
+       
     }
     
     func buttonConfigurating(_ sender: UIButton) {
@@ -91,7 +89,8 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
         //let image = UIImage(named: "shadow")
         //sender.imageView?.contentMode = .scaleToFill
         
-        sender.setBackgroundImage(UIImage(named: "button"), for: .normal)
+        sender.setBackgroundImage(UIImage(named: "button2"), for: .normal)
+        
     }
     
     func disableAllNumberKeys () {
@@ -125,7 +124,6 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
     // MARK: - Button actions from .xib file
     
     @IBAction func keyTapped(_ sender: UIButton) {
-        
         // When a button is tapped, send that information to the
         // delegate (ie, the view controller)
         switch sender.tag {
@@ -149,6 +147,6 @@ class KeyboardCurrencyConverter: UIView, UIInputViewAudioFeedback {
             break
         }
         
-        print("Tapped = \(sender.titleLabel!.text!)")
+        print("Tapped = \(sender.titleLabel!.text ?? "")")
     }
 }

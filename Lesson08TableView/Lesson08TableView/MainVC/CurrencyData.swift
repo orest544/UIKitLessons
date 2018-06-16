@@ -23,6 +23,8 @@ class CurrencyData: NSObject {
     
     static var currencysDatabase: [CurrencyDatabase] = []
     
+    
+    static var currencyFullnameDict = [String: String]()
     //Default values
     static var currencyDict: [String: Double] = ["RON": 1,
                                                  "MYR": 1,
@@ -155,6 +157,12 @@ class CurrencyData: NSObject {
                     CurrencyData.currencyDict[CurrencyData.currencys[i].cc] = CurrencyData.currencys[i].rate
                 }
                 CurrencyData.currencyDict["UAH"] = 1.0
+                
+                for i in 0..<CurrencyData.currencys.count {
+                    CurrencyData.currencyFullnameDict[CurrencyData.currencys[i].cc] = CurrencyData.currencys[i].txt
+                }
+                CurrencyData.currencyFullnameDict["UAH"] = "Українська гривня"
+                
                 print("LOADING ENDED")
                 //print(CurrencyData.currencyDict)
             } catch let jsonErr {

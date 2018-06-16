@@ -55,6 +55,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             CurrencyData.currencyDict["UAH"] = 1.0
             
+            for i in 0..<CurrencyData.currencys.count {
+                CurrencyData.currencyFullnameDict[CurrencyData.currencys[i].cc] = CurrencyData.currencys[i].txt
+            }
+            CurrencyData.currencyFullnameDict["UAH"] = "Українська гривня"
+            
         } catch {
             print(error.localizedDescription as Any)
         }

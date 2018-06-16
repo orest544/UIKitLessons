@@ -13,6 +13,7 @@ class CustomTableViewCell: UITableViewCell {
     @IBOutlet weak var imageViewFlag: UIImageView!
     @IBOutlet weak var ccLabel: UILabel!
     @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var fullName: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

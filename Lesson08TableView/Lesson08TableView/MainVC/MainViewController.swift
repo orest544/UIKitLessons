@@ -18,7 +18,10 @@ extension Double {
 }
 
 class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, KeyboardCurrencyConverterDelegate {
-    let keyboardView = KeyboardCurrencyConverter(frame: CGRect(x: 0, y: 0, width: 0, height: 203))
+    
+    let keyboardView = KeyboardCurrencyConverter(frame: CGRect(x: 0, y: 0, width: 0, height: 198))
+
+    
     let formatter: NumberFormatter = {
         let _formatter = NumberFormatter()
         _formatter.numberStyle = .decimal
@@ -40,7 +43,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         refresher.backgroundColor = UIColor(red: 239, green: 239, blue: 244)
         refresher.tintColor = .black
         refresher.addTarget(self, action: #selector(refreshData), for: .valueChanged)
-        
+        refresher.attributedTitle = NSAttributedString(string: "Потягніть, щоб оновити")
         return refresher
     }()
     
@@ -53,21 +56,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var bottomFuncView: UIView!
-    
+
     
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Uncomment the following line to preserve selection between presentations
-        //self.clearsSelectionOnViewWillAppear = false
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        //self.navigationItem.rightBarButtonItem = self.editButtonItem
-        
-        //CurrencyData.loadCurrencyData()
-        //self.title = "Currency exchange"
         
         self.keyboardView.delegate = self
         
@@ -80,18 +74,22 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         tableView.addSubview(refresher)
-        
         tableView.isUserInteractionEnabled = false
         
         bottomFuncView.frame.origin.y += bottomFuncView.frame.height
         
         print("I AM VIEW DID LOAD!")
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)) , name: .UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)) , name: .UIKeyboardWillHide, object: nil)
+        
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         
-        chooseFirstVisibleCell{
+        chooseFirstVisibleCell {
             let deadline = DispatchTime.now() + .milliseconds(500)
             
             DispatchQueue.main.asyncAfter(deadline: deadline, execute: {
@@ -100,6 +98,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    
     // MARK: - Table view creation
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -107,8 +111,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return currencyNamesArray.count
     }
     
-   
     
+
     // Configure the cells
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
@@ -116,13 +120,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // Configure the cell
         cell.ccLabel?.text = currencyNamesArray[indexPath.row]
         cell.imageViewFlag?.image = UIImage(named: currencyNamesArray[indexPath.row]) //CHANGES FOR DEV
-        
-        cell.textField.isHidden = false
-        
-        cell.textField.tintColor = .clear
-        
+        cell.fullName.text = CurrencyData.currencyFullnameDict[currencyNamesArray[indexPath.row]] ?? ""
+ 
         // Replace system keyboard with custom keyboard
         cell.textField.inputView = keyboardView
+        cell.textField.isHidden = false
+        cell.textField.tintColor = .clear
         
         let doubleValueForCurrentTextField = self.currentResultsDict[currencyNamesArray[indexPath.row]]!
         let stringValueForCurrentTextField = formatter.string(from: NSNumber(value: doubleValueForCurrentTextField))!
@@ -153,11 +156,10 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             if currencyNamesArray.count > 2 {
                 currencyNamesArray.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
+                saveCurrentChosenCurrencies()
             }
         }
     }
-    
-    
     
     /*
      // Override to support conditional rearranging of the table view.
@@ -237,8 +239,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         tableView.reloadData()
-        
-        self.keyboardView.enableAllNumberKeys()
+                
+        saveCurrentChosenCurrencies()
     }
     
     // Select a row
@@ -246,11 +248,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         print("cell selected")
         
         let cell = tableView.cellForRow(at: indexPath) as! CustomTableViewCell
+        
         cell.textField.isEnabled = true
         cell.textField.becomeFirstResponder()
         currentTextField = cell.textField
         
-        self.keyboardView.enableAllNumberKeys()
+        //self.keyboardView.enableAllNumberKeys()
         //print("cell selected") //, cell.textField)
     }
     
@@ -264,13 +267,39 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let cc = self.currencyNamesArray[sourceIndexPath.row]
         self.currencyNamesArray.remove(at: sourceIndexPath.row)
         self.currencyNamesArray.insert(cc, at: destinationIndexPath.row)
+        saveCurrentChosenCurrencies()
     }
     
     override public func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return false
     }
     
+    private func saveCurrentChosenCurrencies() {
+        let defaults = UserDefaults.standard
+        
+        defaults.set(currencyNamesArray, forKey: "currencyNamesArray")
+    }
     
+    @objc func keyboardWillShow(notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height - bottomFuncView.frame.height
+            
+            var contentInsets = UIEdgeInsets()
+            
+            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardHeight, 0.0)
+            
+            tableView.contentInset = contentInsets
+            tableView.scrollIndicatorInsets = contentInsets
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: Notification) {        
+        tableView.contentInset = UIEdgeInsets.zero
+        tableView.scrollIndicatorInsets = UIEdgeInsets.zero
+    }
+
+
     // MARK: - TextFieldDelegate
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -398,7 +427,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func editKeyWasTapped() {
         self.tableView.isEditing = true
         self.view.endEditing(true)
-        
+
         UIView.animate(withDuration: 0.5) {
             self.bottomFuncView.frame.origin.y -= self.bottomFuncView.frame.height
         }

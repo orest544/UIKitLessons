@@ -8,11 +8,18 @@
 
 import UIKit
 
-class EditViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class EditViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UITextFieldDelegate {
+    
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     var chosenCurrencyNamesArray = [String]()
     var allCurrencyNamesArray = [String]()
     var sortedCurrencyNamesArray = [String]()
+    
+    // Arr for search
+    var filteredCurrencyNamesArray = [String]()
+    var currencyArrayForSearch = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,26 +37,68 @@ class EditViewController: UIViewController, UITableViewDataSource, UITableViewDe
         for cc in chosenCurrencyNamesArray.reversed() {
             sortedCurrencyNamesArray.insert(cc, at: 0)
         }
+        
+        filteredCurrencyNamesArray = sortedCurrencyNamesArray
+        
+        for cc in filteredCurrencyNamesArray {
+            let fullname = CurrencyData.currencyFullnameDict[cc] ?? ""
+            currencyArrayForSearch.append(cc + " - " + fullname)
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)) , name: .UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)) , name: .UIKeyboardWillHide, object: nil)
+        
+        
+        
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    @objc func keyboardWillShow(notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height - 50
+            
+            var contentInsets = UIEdgeInsets()
+            
+            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardHeight, 0.0)
+            
+            tableView.contentInset = contentInsets
+            tableView.scrollIndicatorInsets = contentInsets
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: Notification) {
+        tableView.contentInset = UIEdgeInsets.zero
+        tableView.scrollIndicatorInsets = UIEdgeInsets.zero
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
     }
     
     // MARK: - TableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sortedCurrencyNamesArray.count
+        return filteredCurrencyNamesArray.count
     }
     
     // Creating a cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "EditCell")
         
-        cell.textLabel?.text = sortedCurrencyNamesArray[indexPath.row]
+        let fullname = CurrencyData.currencyFullnameDict[filteredCurrencyNamesArray[indexPath.row]] ?? ""
+        cell.textLabel?.text = filteredCurrencyNamesArray[indexPath.row] + " - " + fullname
         cell.tintColor = .black
         cell.backgroundColor = UIColor(red: 239, green: 239, blue: 244)
         cell.contentView.backgroundColor = UIColor(red: 239, green: 239, blue: 244)
         cell.accessoryView?.backgroundColor = UIColor(red: 239, green: 239, blue: 244)
     
-        if chosenCurrencyNamesArray.index(of:
-            sortedCurrencyNamesArray[indexPath.row]) != nil {
+        if chosenCurrencyNamesArray.index(of: filteredCurrencyNamesArray[indexPath.row]) != nil {
             cell.accessoryType = .checkmark
         }
         
@@ -63,22 +112,33 @@ class EditViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             if chosenCell?.accessoryType == .checkmark && chosenCurrencyNamesArray.count > 2 {
                 chosenCell?.accessoryType = .none
-                
-                let index = chosenCurrencyNamesArray.index(of: (chosenCell?.textLabel?.text)!)
+                let index = chosenCurrencyNamesArray.index(of: String((chosenCell?.textLabel?.text?.prefix(3))!))
                 chosenCurrencyNamesArray.remove(at: index!)
             } else if chosenCell?.accessoryType != .checkmark {
                 chosenCell?.accessoryType = .checkmark
-                chosenCurrencyNamesArray.append((chosenCell?.textLabel?.text)!)
+                chosenCurrencyNamesArray.append(String((chosenCell?.textLabel?.text?.prefix(3))!))
             }
     }
     
-    // Move
-    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
+    // MARK: - SearchBar delegate
     
-    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        print("sourceIndexPath: ", sourceIndexPath, "destinationIndexPath", destinationIndexPath)
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard !searchText.isEmpty else {
+            filteredCurrencyNamesArray = sortedCurrencyNamesArray
+            tableView.reloadData()
+            return
+        }
+        
+        
+        filteredCurrencyNamesArray = currencyArrayForSearch.filter {
+            return $0.lowercased().contains(searchText.lowercased())
+        }
+        
+        for i in 0..<filteredCurrencyNamesArray.count {
+            filteredCurrencyNamesArray[i] = String(filteredCurrencyNamesArray[i].prefix(3))
+        }
+        print(filteredCurrencyNamesArray)
+        tableView.reloadData()
     }
     
     // MARK: - Navigation
