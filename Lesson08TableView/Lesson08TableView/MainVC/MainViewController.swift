@@ -84,6 +84,9 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)) , name: .UIKeyboardWillHide, object: nil)
         
+        //TEST CHANGES
+        let a = Int()
+        
     }
 
     override func viewDidAppear(_ animated: Bool) {
