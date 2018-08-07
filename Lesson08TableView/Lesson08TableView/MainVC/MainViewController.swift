@@ -86,6 +86,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         //TEST CHANGES
         let a = Int()
+        let b = Int()
         
     }
 
